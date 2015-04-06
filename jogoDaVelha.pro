@@ -1,4 +1,4 @@
-:- [pertence, naoPertence].
+%% :- [pertence, naoPertence].
 
 % A idéia aqui é fazer com que a função polinomial que avaliará 
 % o estado do jogo siga a seguinte função 
@@ -8,7 +8,9 @@
 
 
 % Estado inicial do tabuleiro
-tab([1,1,0], [0,2,0], [2,0,2]) :- !.
+:- dynamic tabAux/3
+tab([1,0,1], [0,0,0], [0,0,0]) :- !.
+
 %O estado do tabuleiro deve ser trocado de usando a remoção de fatos
 
 
@@ -50,7 +52,7 @@ vv(P, [X3, X5, X7], P8), % Diagonal Secundaria
 QVV is P1 + P2 + P3 + P4 + P5 + P6 + P7 + P8.
 
 
-%Verificar o que é isso abaixo...
+%player adversário
 pa(1, 2).
 pa(2, 1).
 
@@ -60,7 +62,14 @@ pvx(P, QPV),
 vvx(P, QV),
 pa(P, Pa),
 pa(Pa, V2),
-VAL is 200 * QPV + 1000 * QV - 2000 * V2.
+VAL is 200 * QPV + 10000 * QV - 2000 * V2.
+
+
+%% Precisa da melhor posição, esta é obtida percorrendo todas as possíbilidades de jogadas em aberto e ver qual é melhor ou menos pior
+%% Para tal é necessário uma função que retorne a lista de posições a serem jogadas, e uma outra que experimente e todas e traga a de melhor valor
+listaLivres
+
+
 
 
 print(P, QPV) :- pvx(P, QPV), format('Resultado é ~d', QPV).
