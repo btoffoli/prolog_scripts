@@ -81,73 +81,90 @@ marcarTabuleiro([X1, X2, X3, X4, X5, X6, X7, X8, X9], P, 9, [X1, X2, X3, X4, X5,
 %% marcarTabuleiro(TAB, _, _, TAB_AUX) :- !.
 
 
-avaliarPosicao(_, _, [], _, _, POS) :- write('POS' + POS + '\n'), !.
+avaliarPosicao(_, _, [], _, _, POS) :- 
+%% write('POS' + POS + '\n'), 
+!.
 
 avaliarPosicao(P, TAB, [X|R], VAL, N, POS) :- 
-write('chamada1' + X + '\n'), X == 0, 
+%% write('chamada1' + X + '\n'), 
+X == 0, 
 marcarTabuleiro(TAB, P, N, TAB_AUX), 
-write(1 + TAB_AUX + '\n'),
-favl(P, TAB_AUX, VAL_AUX), VAL_AUX > VAL, 
+%% write(1 + TAB_AUX + '\n'),
+favl(P, TAB_AUX, VAL_AUX), 
+VAL_AUX > VAL, 
 POS is N,
 NAUX is N+1, 
-write('terminou chamada1' + P + TAB + R + VAL + NAUX + POS + '\n'),
+%% write('terminou chamada1' + P + TAB + R + VAL + NAUX + POS + '\n'),
 avaliarPosicao(P, TAB, R, VAL_AUX, NAUX, POS), 
 !.
 
 avaliarPosicao(P, TAB, [X|R], VAL, N, POS) :- 
-write('chamada2' + X + '\n'), X == 0, 
+%% write('chamada2' + X + '\n'), 
+X == 0, 
 marcarTabuleiro(TAB, P, N, TAB_AUX), 
-write(2 + TAB_AUX + '\n'),
-favl(P, TAB_AUX, VAL_AUX), VAL_AUX =< VAL, 
+%% write(2 + TAB_AUX + '\n'),
+favl(P, TAB_AUX, VAL_AUX), 
+VAL_AUX =< VAL, 
 NAUX is N+1, 
-write('terminou chamada2' + P + TAB + R + VAL + NAUX + POS + '\n'),
+%% write('terminou chamada2' + P + TAB + R + VAL + NAUX + POS + '\n'),
 avaliarPosicao(P, TAB, R, VAL, NAUX, POS), 
 !.
 
 avaliarPosicao(P, TAB, [X|R], VAL, N, POS) :- 
-write('chamada3' + X + '\n'), 
+%% write('chamada3' + X + '\n'), 
 X=\=0, 
 NAUX is N+1, 
-write('terminou chamada3' + P + TAB + R + VAL + NAUX + POS + '\n'),
+%% write('terminou chamada3' + P + TAB + R + VAL + NAUX + POS + '\n'),
 avaliarPosicao(P, TAB, R, VAL, NAUX, POS), 
 !.
 
-melhorPosicao(P, TAB, X) :- avaliarPosicao(P, TAB, TAB, -11000, 1, X), write(X), !.
+melhorPosicao(P, TAB, X) :- 
+avaliarPosicao(P, TAB, TAB, -11000, 1, X), 
+%% write(X), 
+!.
 
 %% tentarJogar(_, _, [], _, TAB_AUX) :-  !.
 % Não precisa ir até o final do tabuleiro
 tentarJogar(P, POS, TAB, [X|R], POS, TAB_AUX) :- 
 %% POS == N, 
 X == 0, 
-write('tentarJogar1 ' + POS + N + X + '\n'),
+%% write('tentarJogar1 ' + POS + N + X + '\n'),
 marcarTabuleiro(TAB, P, POS, TAB_AUX), !.
 
 tentarJogar(P, POS, TAB, [X|R], N, TAB_AUX) :- 
 POS > N, 
-write('tentarJogar2 ' + POS + N + X + '\n'),
+%% write('tentarJogar2 ' + POS + N + X + '\n'),
 N1 is N +1,
 tentarJogar(P, POS, TAB, R, N1, TAB_AUX), !.
 
 jogar(P, POS, TAB, TAB_AUX) :- tentarJogar(P, POS, TAB, TAB, 1, TAB_AUX).
 
-jogarJogador(P, TAB, TAB_AUX) :- write('Entre com a posicao:'), read(X), jogar(P, X, TAB, TAB_AUX), write('TAB =>' + TAB_AUX + '\n').
+jogarJogador(P, TAB, TAB_AUX) :- 
+write('Entre com a posicao:'), 
+read(X), jogar(P, X, TAB, TAB_AUX)
+, write('TAB =>' + TAB_AUX + '\n')
+.
 
 verificarVitoria(P, TAB) :- 
-vvx(1,TAB, QV), 
+vvx(P,TAB, QV), 
 QV < 1, !.
 
 verificarVitoria(P, TAB) :- 
-vvx(1,TAB, QV), 
+vvx(P,TAB, QV), 
 QV > 0, 
 write('Jogo acabou com jogador ' +  P + ' Campeao'), %%!,
 fail.
 
 %% melhorPosicao já avalia posicao válida, não foi necessário utilizar a regra jogar
-jogarMaquina(P, TAB, TAB_AUX) :- melhorPosicao(P, TAB, POS), marcarTabuleiro(TAB, P, POS, TAB_AUX), write('TAB =>' + TAB_AUX + '\n').
+jogarMaquina(P, TAB, TAB_AUX) :- melhorPosicao(P, TAB, POS), marcarTabuleiro(TAB, P, POS, TAB_AUX)
+, write('TAB =>' + TAB_AUX + '\n')
+.
 
 rodarTurnoJogo(TAB) :- jogarJogador(1, TAB, TAB_AUX), verificarVitoria(1, TAB_AUX), jogarMaquina(2, TAB_AUX, TAB_AUX2), verificarVitoria(2, TAB_AUX2), rodarTurnoJogo(TAB_AUX2).
 
-iniciar :- TAB = [0,0,0, 0,0,0, 0,0,0], write('TAB =>' + TAB + '\n'), rodarTurnoJogo(TAB).
+iniciar :- TAB = [0,0,0, 0,0,0, 0,0,0], 
+write('TAB =>' + TAB + '\n'), 
+rodarTurnoJogo(TAB).
 
 
 print(P, QPV) :- pvx(P, QPV), format('Resultado é ~d', QPV).
