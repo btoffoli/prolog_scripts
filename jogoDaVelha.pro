@@ -14,6 +14,16 @@
 
 %O estado do tabuleiro deve ser trocado de usando a remoção de fatos
 
+posicalPreferencial(P, 2000, [P, X2, X3, X4, X5, X6, X7, X8, X9]) :- !.
+posicalPreferencial(P, 900, [X1, P, X3, X4, X5, X6, X7, X8, X9]) :- !.
+posicalPreferencial(P, 2000, [X1, X2, P, X4, X5, X6, X7, X8, X9]) :- !.
+posicalPreferencial(P, 900, [X1, X2, X3, P, X5, X6, X7, X8, X9]) :- !.
+posicalPreferencial(P, 1500, [X1, X2, X3, X4, P, X6, X7, X8, X9]) :- !.
+posicalPreferencial(P, 900, [X1, X2, X3, X4, X5, P, X7, X8, X9]) :- !.
+posicalPreferencial(P, 2000, [X1, X2, X3, X4, X5, X6, P, X8, X9]) :- !.
+posicalPreferencial(P, 900, [X1, X2, X3, X4, X5, X6, X7, P, X9]) :- !.
+posicalPreferencial(P, 2000, [X1, X2, X3, X4, X5, X6, X7, X8, P]) :- !.
+
 
 % Calculo da probabilidade de quase fechar o jogo (faltando uma peça, P-> player)
 pv(P, P, P, 0, 1) :- !.
@@ -53,6 +63,8 @@ vv(P, X3, X5, X7, P8), % Diagonal Secundaria
 QVV is P1 + P2 + P3 + P4 + P5 + P6 + P7 + P8.
 
 
+
+
 %player adversário
 pa(1, 2).
 pa(2, 1).
@@ -61,10 +73,13 @@ pa(2, 1).
 favl(P, TAB, VAL) :- 
 pvx(P, TAB, QPV),
 vvx(P, TAB, QV),
+posicalPreferencial(P, PONTOS, TAB),
+%% write("PONTOS="+PONTOS),
 pa(P, Pa),
 pa(Pa, P2),
-%favl(P2, VAL2),
-VAL is 1000 * QPV + 10000 * QV - 2000 * P2.
+%% favl(P2, VAL2),
+VAL is PONTOS + 1000 * QPV + 10000 * QV - 2000 * P2,
+write(VAL).
 
 
 %% Precisa da melhor posição, esta é obtida percorrendo todas as possíbilidades de jogadas em aberto e ver qual é melhor ou menos pior
