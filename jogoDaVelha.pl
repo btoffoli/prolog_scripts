@@ -25,15 +25,15 @@ posicalPreferencial(P, 900,  [X1, X2, X3, X4, X5, X6, X7, P, X9]) :- !.
 posicalPreferencial(P, 2000, [X1, X2, X3, X4, X5, X6, X7, X8, P]) :- !.
 posicalPreferencial(P, 0, _) :- !.
 
-pesoPosicao(1, 2000) :- !.
-pesoPosicao(2, 900) :- !.
-pesoPosicao(3, 2000) :- !.
-pesoPosicao(4, 900) :- !.
-pesoPosicao(5, 1500) :- !.
-pesoPosicao(6, 900) :- !.
-pesoPosicao(7, 2000) :- !.
-pesoPosicao(8, 900) :- !.
-pesoPosicao(9, 2000) :- !.
+pesoPosicao(1, 800) :- !.
+pesoPosicao(2, 600) :- !.
+pesoPosicao(3, 800) :- !.
+pesoPosicao(4, 600) :- !.
+pesoPosicao(5, 700) :- !.
+pesoPosicao(6, 600) :- !.
+pesoPosicao(7, 800) :- !.
+pesoPosicao(8, 600) :- !.
+pesoPosicao(9, 800) :- !.
 pesoPosicao(_, 0) :- !.
 
 
@@ -86,13 +86,16 @@ favl(P, TAB, VAL) :-
 pvx(P, TAB, QPV),
 vvx(P, TAB, QV),
 %%posicalPreferencial(P, PONTOS, TAB),
-%% write("PONTOS="+PONTOS),
-%%pa(P, Pa),
-%%pa(Pa, P2),
+%% %%write("PONTOS="+PONTOS),
+pa(P, P2),
+pvx(P2, TAB, QPV2),
+%vvx(P2, TAB, QV2),
+%pa(Pa, P2),
 %% favl(P2, VAL2),
 %%VAL is PONTOS + 1000 * QPV + 10000 * QV,
-VAL is 1000 * QPV + 10000 * QV,
-write(VAL).
+VAL is (1000 * QPV + 10000 * QV - 1000 * QPV2)
+%%, write(VAL).
+.
 
 
 %% Precisa da melhor posição, esta é obtida percorrendo todas as possíbilidades de jogadas em aberto e ver qual é melhor ou menos pior
@@ -109,65 +112,65 @@ marcarTabuleiro([X1, X2, X3, X4, X5, X6, X7, X8, X9], P, 9, [X1, X2, X3, X4, X5,
 %% marcarTabuleiro(TAB, _, _, TAB_AUX) :- !.
 
 
-avaliarPosicao(_, _, [], _, _, POS) :- 
-write('CASO BASE POS' + POS + '\n'), 
+avaliarPosicao(_, _, [], _, _, POS, POS) :- 
+%%write('CASO BASE POSAUX' + POS + '\n'), 
 !.
 
-avaliarPosicao(P, TAB, [X|R], VAL, N, POS) :- 
+avaliarPosicao(P, TAB, [X|R], VAL, N, POSAUX, POS) :- 
 X == 0, 
-write('chamada1' + X + '; ' + N + '\n'), 
+%%write('chamada1' + X + '; ' + N + '\n'), 
 marcarTabuleiro(TAB, P, N, TAB_AUX), 
-%% write(1 + TAB_AUX + '\n'),
+%% %%write(1 + TAB_AUX + '\n'),
 favl(P, TAB_AUX, VAL_AUX), 
-pa(P, P2),
-favl(P2, TAB_AUX, VAL_AUX2),
+%% pa(P, P2),
+%% favl(P2, TAB_AUX, VAL_AUX2),
+VAL_AUX2 is 0,
 pesoPosicao(N, PP),
 VAL_AUX3 is VAL_AUX - VAL_AUX2 + PP,
 %%VAL_AUX3 is VAL_AUX - VAL_AUX2,
+write('N=' + N +	' VAL_AUX='+ VAL_AUX + ' VAL_AUX2='+ VAL_AUX2 + ' VAL_AUX3=' + VAL_AUX3 + ' PP=' + PP +'\n'),
 VAL_AUX3 > VAL, 
 POS1 is N,
-write('VAL_AUX='+ VAL_AUX + 'VAL_AUX3=' + VAL_AUX3 +'\n'),
 NAUX is N+1, 
-write('terminou chamada1' + P + TAB + R + VAL_AUX + VAL_AUX3 + NAUX + POS + '\n'),
-avaliarPosicao(P, TAB, R, VAL_AUX3, NAUX, POS1) %%,!
-, POS is POS1
-%% write('chamada1' + X + '\n'), 
-%%write('\n' + POS + '\n'),
-%%write('\n' + VAL_AUX + '-' + VAL_AUX2 +' '+ VAL_AUX3 + '\n'),
+%%write('terminou chamada1' + P + TAB + R + VAL_AUX + VAL_AUX3 + NAUX + POSAUX + '\n'),
+avaliarPosicao(P, TAB, R, VAL_AUX3, NAUX, POS1, POS) %%,!
+%% %%write('chamada1' + X + '\n'), 
+%%%%write('\n' + POSAUX + '\n'),
+%%%%write('\n' + VAL_AUX + '-' + VAL_AUX2 +' '+ VAL_AUX3 + '\n'),
 
 .
 
-avaliarPosicao(P, TAB, [X|R], VAL, N, POS) :- 
+avaliarPosicao(P, TAB, [X|R], VAL, N, POSAUX, POS) :- 
 X == 0, 
-write('chamada2' + X + '; ' + N + '\n'), 
+%%write('chamada2' + X + '; ' + N + '\n'), 
 marcarTabuleiro(TAB, P, N, TAB_AUX), 
-%% write(2 + TAB_AUX + '\n'),
+%% %%write(2 + TAB_AUX + '\n'),
 favl(P, TAB_AUX, VAL_AUX), 
 pa(P, P2),
 favl(P2, TAB_AUX, VAL_AUX2),
 pesoPosicao(N, PP),
 VAL_AUX3 is VAL_AUX - VAL_AUX2 + PP,
 %%VAL_AUX3 is VAL_AUX - VAL_AUX2,
-write('chamada2' + P + TAB + R + VAL_AUX + VAL_AUX3  + POS + '\n'),
+%%write('chamada2' + P + TAB + R + VAL_AUX + VAL_AUX3  + POSAUX + '\n'),
 VAL_AUX3 =< VAL,
 NAUX is N+1, 
-write('terminou chamada2' + P + TAB + R + VAL_AUX + VAL_AUX3 + NAUX + POS + '\n'),
-avaliarPosicao(P, TAB, R, VAL, NAUX, POS),
+%%write('terminou chamada2' + P + TAB + R + VAL_AUX + VAL_AUX3 + NAUX + POSAUX + '\n'),
+avaliarPosicao(P, TAB, R, VAL, NAUX, POSAUX, POS),
 !.
 
-avaliarPosicao(P, TAB, [X|R], VAL, N, POS) :- 
-write('chamada3' + X + '; ' + N + '\n'), 
+avaliarPosicao(P, TAB, [X|R], VAL, N, POSAUX, POS) :- 
+%%write('chamada3' + X + '; ' + N + '\n'), 
 X=\=0, 
-write('chamada3' + X + '\n'), 
+%%write('chamada3' + X + '\n'), 
 NAUX is N+1, 
-write('terminou chamada3' + P + TAB + R + VAL + NAUX + POS + '\n'),
-avaliarPosicao(P, TAB, R, VAL, NAUX, POS), 
+%%write('terminou chamada3' + P + TAB + R + VAL + NAUX + POSAUX + '\n'),
+avaliarPosicao(P, TAB, R, VAL, NAUX, POSAUX, POS), 
 
 !.
 
 melhorPosicao(P, TAB, X) :- 
-avaliarPosicao(P, TAB, TAB, -11000, 1, X), 
-write('X=' + X + '\n'), 
+avaliarPosicao(P, TAB, TAB, -11000, 1, _, X), 
+%%write('X=' + X + '\n'), 
 !.
 
 %% tentarJogar(_, _, [], _, TAB_AUX) :-  !.
@@ -175,21 +178,21 @@ write('X=' + X + '\n'),
 tentarJogar(P, POS, TAB, [X|R], POS, TAB_AUX) :- 
 %% POS == N, 
 X == 0, 
-%% write('tentarJogar1 ' + POS + N + X + '\n'),
+%% %%write('tentarJogar1 ' + POS + N + X + '\n'),
 marcarTabuleiro(TAB, P, POS, TAB_AUX), !.
 
 tentarJogar(P, POS, TAB, [X|R], N, TAB_AUX) :- 
 POS > N, 
-%% write('tentarJogar2 ' + POS + N + X + '\n'),
+%% %%write('tentarJogar2 ' + POS + N + X + '\n'),
 N1 is N +1,
 tentarJogar(P, POS, TAB, R, N1, TAB_AUX), !.
 
 jogar(P, POS, TAB, TAB_AUX) :- tentarJogar(P, POS, TAB, TAB, 1, TAB_AUX).
 
 jogarJogador(P, TAB, TAB_AUX) :- 
-write('Entre com a posicao:'), 
+%%write('Entre com a posicao:'), 
 read(X), jogar(P, X, TAB, TAB_AUX)
-, write('TAB =>' + TAB_AUX + '\n')
+ , write('TAB =>' + TAB_AUX + '\n')
 .
 
 verificarVitoria(P, TAB) :- 
@@ -204,14 +207,17 @@ fail.
 
 %% melhorPosicao já avalia posicao válida, não foi necessário utilizar a regra jogar
 jogarMaquina(P, TAB, TAB_AUX) :- melhorPosicao(P, TAB, POS), marcarTabuleiro(TAB, P, POS, TAB_AUX)
-, write('TAB =>' + TAB_AUX + '\n')
+,write('TAB =>' + TAB_AUX + '\n')
 .
+
 
 rodarTurnoJogo(TAB) :- jogarJogador(1, TAB, TAB_AUX), verificarVitoria(1, TAB_AUX), jogarMaquina(2, TAB_AUX, TAB_AUX2), verificarVitoria(2, TAB_AUX2), rodarTurnoJogo(TAB_AUX2).
 
 iniciar :- TAB = [0,0,0, 0,0,0, 0,0,0], 
 write('TAB =>' + TAB + '\n'), 
 rodarTurnoJogo(TAB).
+
+
 
 
 print(P, QPV) :- pvx(P, QPV), format('Resultado é ~d', QPV).
