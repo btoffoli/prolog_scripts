@@ -118,7 +118,7 @@ VAL_AUX2 is 0,
 pesoPosicao(N, PP),
 VAL_AUX3 is VAL_AUX - VAL_AUX2 + PP,
 %%VAL_AUX3 is VAL_AUX - VAL_AUX2,
-write('N=' + N +	' VAL_AUX='+ VAL_AUX + ' VAL_AUX2='+ VAL_AUX2 + ' VAL_AUX3=' + VAL_AUX3 + ' PP=' + PP +'\n'),
+%% write('N=' + N +	' VAL_AUX='+ VAL_AUX + ' VAL_AUX2='+ VAL_AUX2 + ' VAL_AUX3=' + VAL_AUX3 + ' PP=' + PP +'\n'),
 VAL_AUX3 > VAL, 
 POS1 is N,
 NAUX is N+1, 
@@ -163,11 +163,20 @@ avaliarPosicao(P, TAB, TAB, -11000, 1, _, X),
 %%write('X=' + X + '\n'), 
 !.
 
+
+verificarPosicaoLivre(X, TAB) :-
+X =\= 0,
+write('Posicao Invalida. Tente novamente.'),
+rodarTurnoJogo(TAB).
+
+verificarPosicaoLivre(X, TAB) :-
+X == 0.
+
 %% tentarJogar(_, _, [], _, TAB_AUX) :-  !.
 % Não precisa ir até o final do tabuleiro
 tentarJogar(P, POS, TAB, [X|R], POS, TAB_AUX) :- 
 %% POS == N, 
-X == 0, 
+verificarPosicaoLivre(X, TAB), 
 %% %%write('tentarJogar1 ' + POS + N + X + '\n'),
 marcarTabuleiro(TAB, P, POS, TAB_AUX), !.
 
