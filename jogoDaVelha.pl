@@ -14,17 +14,6 @@
 
 %O estado do tabuleiro deve ser trocado de usando a remoção de fatos
 
-posicalPreferencial(P, 2000, [P, X2, X3, X4, X5, X6, X7, X8, X9]) :- !.
-posicalPreferencial(P, 900,  [X1, P, X3, X4, X5, X6, X7, X8, X9]) :- !.
-posicalPreferencial(P, 2000, [X1, X2, P, X4, X5, X6, X7, X8, X9]) :- !.
-posicalPreferencial(P, 900,  [X1, X2, X3, P, X5, X6, X7, X8, X9]) :- !.
-posicalPreferencial(P, 1500, [X1, X2, X3, X4, P, X6, X7, X8, X9]) :- !.
-posicalPreferencial(P, 900,  [X1, X2, X3, X4, X5, P, X7, X8, X9]) :- !.
-posicalPreferencial(P, 2000, [X1, X2, X3, X4, X5, X6, P, X8, X9]) :- !.
-posicalPreferencial(P, 900,  [X1, X2, X3, X4, X5, X6, X7, P, X9]) :- !.
-posicalPreferencial(P, 2000, [X1, X2, X3, X4, X5, X6, X7, X8, P]) :- !.
-posicalPreferencial(P, 0, _) :- !.
-
 pesoPosicao(1, 800) :- !.
 pesoPosicao(2, 600) :- !.
 pesoPosicao(3, 800) :- !.
@@ -38,10 +27,11 @@ pesoPosicao(_, 0) :- !.
 
 
 % Calculo da probabilidade de quase fechar o jogo (faltando uma peça, P-> player)
-pv(P, P, P, 0, 1) :- !.
-pv(P, P, 0, P, 1) :- !.
-pv(P, 0, P, P, 1) :- !.
+pv(P, P, P, _, 1) :- !.
+pv(P, P, _, P, 1) :- !.
+pv(P, _, P, P, 1) :- !.
 pv(P, _, _, _, 0).
+
 
 pvx(P, [X1, X2, X3, X4, X5, X6, X7, X8, X9], QPV) :- 
 %% tab(X1, X2, X3, X4, X5, X6, X7, X8, X9),
