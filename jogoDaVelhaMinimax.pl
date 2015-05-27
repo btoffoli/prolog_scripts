@@ -14,17 +14,6 @@
 
 %O estado do tabuleiro deve ser trocado de usando a remoção de fatos
 
-posicalPreferencial(P, 2000, [P, X2, X3, X4, X5, X6, X7, X8, X9]) :- !.
-posicalPreferencial(P, 900,  [X1, P, X3, X4, X5, X6, X7, X8, X9]) :- !.
-posicalPreferencial(P, 2000, [X1, X2, P, X4, X5, X6, X7, X8, X9]) :- !.
-posicalPreferencial(P, 900,  [X1, X2, X3, P, X5, X6, X7, X8, X9]) :- !.
-posicalPreferencial(P, 1500, [X1, X2, X3, X4, P, X6, X7, X8, X9]) :- !.
-posicalPreferencial(P, 900,  [X1, X2, X3, X4, X5, P, X7, X8, X9]) :- !.
-posicalPreferencial(P, 2000, [X1, X2, X3, X4, X5, X6, P, X8, X9]) :- !.
-posicalPreferencial(P, 900,  [X1, X2, X3, X4, X5, X6, X7, P, X9]) :- !.
-posicalPreferencial(P, 2000, [X1, X2, X3, X4, X5, X6, X7, X8, P]) :- !.
-posicalPreferencial(P, 0, _) :- !.
-
 pesoPosicao(1, 800) :- !.
 pesoPosicao(2, 600) :- !.
 pesoPosicao(3, 800) :- !.
@@ -38,10 +27,11 @@ pesoPosicao(_, 0) :- !.
 
 
 % Calculo da probabilidade de quase fechar o jogo (faltando uma peça, P-> player)
-pv(P, P, P, 0, 1) :- !.
-pv(P, P, 0, P, 1) :- !.
-pv(P, 0, P, P, 1) :- !.
+pv(P, P, P, _, 1) :- !.
+pv(P, P, _, P, 1) :- !.
+pv(P, _, P, P, 1) :- !.
 pv(P, _, _, _, 0).
+
 
 pvx(P, [X1, X2, X3, X4, X5, X6, X7, X8, X9], QPV) :- 
 %% tab(X1, X2, X3, X4, X5, X6, X7, X8, X9),
@@ -112,7 +102,7 @@ marcarTabuleiro([X1, X2, X3, X4, X5, X6, X7, X8, X9], P, 9, [X1, X2, X3, X4, X5,
 %% marcarTabuleiro(TAB, _, _, TAB_AUX) :- !.
 
 
-avaliarPosicao(_, _, [], _, _, POS, POS) :- 
+avaliarPosicao(_, _, [], _, _, _, _, POS, POS) :- 
 %%write('CASO BASE POSAUX' + POS + '\n'), 
 !.
 
@@ -124,11 +114,10 @@ marcarTabuleiro(TAB, P, N, TAB_AUX),
 favl(P, TAB_AUX, VAL_AUX), 
 %% pa(P, P2),
 %% favl(P2, TAB_AUX, VAL_AUX2),
-VAL_AUX2 is 0,
 pesoPosicao(N, PP),
-VAL_AUX3 is VAL_AUX - VAL_AUX2 + PP,
+VAL_AUX3 is VAL_AUX + PP,
 %%VAL_AUX3 is VAL_AUX - VAL_AUX2,
-write('N=' + N +	' VAL_AUX='+ VAL_AUX + ' VAL_AUX2='+ VAL_AUX2 + ' VAL_AUX3=' + VAL_AUX3 + ' PP=' + PP +'\n'),
+%% write('N=' + N +	' VAL_AUX='+ VAL_AUX + ' VAL_AUX2='+ VAL_AUX2 + ' VAL_AUX3=' + VAL_AUX3 + ' PP=' + PP +'\n'),
 VAL_AUX3 > VAL, 
 POS1 is N,
 NAUX is N+1, 
@@ -146,10 +135,8 @@ X == 0,
 marcarTabuleiro(TAB, P, N, TAB_AUX), 
 %% %%write(2 + TAB_AUX + '\n'),
 favl(P, TAB_AUX, VAL_AUX), 
-pa(P, P2),
-favl(P2, TAB_AUX, VAL_AUX2),
 pesoPosicao(N, PP),
-VAL_AUX3 is VAL_AUX - VAL_AUX2 + PP,
+VAL_AUX3 is VAL_AUX + PP,
 %%VAL_AUX3 is VAL_AUX - VAL_AUX2,
 %%write('chamada2' + P + TAB + R + VAL_AUX + VAL_AUX3  + POSAUX + '\n'),
 VAL_AUX3 =< VAL,
@@ -168,16 +155,25 @@ avaliarPosicao(P, TAB, R, VAL, NAUX, POSAUX, POS),
 
 !.
 
-melhorPosicao(P, TAB, X) :- 
-avaliarPosicao(P, TAB, TAB, -11000, 1, _, X), 
+melhorPosicao(P, TAB, NIVEL, X) :- 
+avaliarPosicao(P, TAB, TAB, -11000, 1, NIVEL, _, _, X), 
 %%write('X=' + X + '\n'), 
 !.
+
+
+verificarPosicaoLivre(X, TAB) :-
+X =\= 0,
+write('Posicao Invalida. Tente novamente.'),
+rodarTurnoJogo(TAB).
+
+verificarPosicaoLivre(X, TAB) :-
+X == 0.
 
 %% tentarJogar(_, _, [], _, TAB_AUX) :-  !.
 % Não precisa ir até o final do tabuleiro
 tentarJogar(P, POS, TAB, [X|R], POS, TAB_AUX) :- 
 %% POS == N, 
-X == 0, 
+verificarPosicaoLivre(X, TAB), 
 %% %%write('tentarJogar1 ' + POS + N + X + '\n'),
 marcarTabuleiro(TAB, P, POS, TAB_AUX), !.
 
@@ -206,16 +202,18 @@ write('Jogo acabou com jogador ' +  P + ' Campeao'), %%!,
 fail.
 
 %% melhorPosicao já avalia posicao válida, não foi necessário utilizar a regra jogar
-jogarMaquina(P, TAB, TAB_AUX) :- melhorPosicao(P, TAB, POS), marcarTabuleiro(TAB, P, POS, TAB_AUX)
+jogarMaquina(P, NIVEL, TAB, TAB_AUX) :- melhorPosicao(P, TAB, NIVEL, POS), marcarTabuleiro(TAB, P, POS, TAB_AUX)
 ,write('TAB =>' + TAB_AUX + '\n')
 .
 
 
-rodarTurnoJogo(TAB) :- jogarJogador(1, TAB, TAB_AUX), verificarVitoria(1, TAB_AUX), jogarMaquina(2, TAB_AUX, TAB_AUX2), verificarVitoria(2, TAB_AUX2), rodarTurnoJogo(TAB_AUX2).
+rodarTurnoJogo(TAB) :- jogarJogador(1, TAB, TAB_AUX), verificarVitoria(1, TAB_AUX), jogarMaquina(2, NIVEL, TAB_AUX, TAB_AUX2), verificarVitoria(2, TAB_AUX2), rodarTurnoJogo(TAB_AUX2).
 
-iniciar :- TAB = [0,0,0, 0,0,0, 0,0,0], 
+iniciar :- write('Entre com o nível minimax:\n'), 
+read(NIVEL),
+TAB = [0,0,0, 0,0,0, 0,0,0], 
 write('TAB =>' + TAB + '\n'), 
-rodarTurnoJogo(TAB).
+rodarTurnoJogo(TAB, NIVEL).
 
 
 
