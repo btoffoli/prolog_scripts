@@ -83,7 +83,7 @@ pvx(P2, TAB, QPV2),
 %pa(Pa, P2),
 %% favl(P2, VAL2),
 %%VAL is PONTOS + 1000 * QPV + 10000 * QV,
-VAL is (1000 * QPV + 10000 * QV - 1000 * QPV2)
+VAL is (1000 * QPV + 10000 * QV - 1100 * QPV2)
 %%, write(VAL).
 .
 
@@ -101,10 +101,48 @@ marcarTabuleiro([X1, X2, X3, X4, X5, X6, X7, X8, X9], P, 8, [X1, X2, X3, X4, X5,
 marcarTabuleiro([X1, X2, X3, X4, X5, X6, X7, X8, X9], P, 9, [X1, X2, X3, X4, X5, X6, X7, X8, P]) :- !.
 %% marcarTabuleiro(TAB, _, _, TAB_AUX) :- !.
 
+avaliarPosicaoValor(_, _, [], _, VAL, VALFINAL).
 
-avaliarPosicao(_, _, [], _, _, _, _, POS, POS) :- 
+avaliarPosicaoValor(P, TAB, [X|R], N, VAL, VALFINAL)
+X == 0,
+marcarTabuleiro(TAB, P, N, TAB_AUX),
+favl(P, TAB_AUX, VAL_AUX), 
+pesoPosicao(N, PP),
+VAL_AUX2 is VAL_AUX + PP + VAL
+avaliarPosicaoValor(P, TAB, R, N+1, VAL_AUX2, VALFINAL)
+.
+
+
+avaliarPosicaoValor(P, TAB, [X|R], N, VAL, VALFINAL)
+X =\= 0,
+avaliarPosicaoValor(P, TAB, R, N+1, VAL, VALFINAL)
+.
+
+avaliarPosicaoProfudidade(_, _, VAL, NIVEL, NIVEL, _).
+
+
+
+
+avaliarPosicaoProfudidade(P, TAB, VAL, NIVELAUX, NIVEL, POSAUX) :-
+
+%% avaliarPosicao(P, TAB, TAB, -11000, 1, NIVEL, _, _, X), 
+avaliarPosicaoValor(P, TAB, TAB, VAL_AUX, 1, _, _)
+VAL = VAL_AUX + 
+.
+
+
+
+
+avaliarPosicao(_, _, [], _, _, POS, POS) :- 
 %%write('CASO BASE POSAUX' + POS + '\n'), 
 !.
+
+
+%% Este predicado é para ser utilizado pelo avaliarPosicaoProfudidade
+%% avaliarPosicao(P, TAB, TAB, VAL, N, _, _) :-
+%% avaliarPosicao(P, TAB, TAB, VAL, 1, _, POSAUX),
+%write('VALDENIVEL=' + VAL)
+%.
 
 avaliarPosicao(P, TAB, [X|R], VAL, N, POSAUX, POS) :- 
 X == 0, 
