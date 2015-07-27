@@ -31,21 +31,25 @@ aresta(e, f).
 %% aresta(e, d, 3).
 %% aresta(f, e, 4).
 
-obterArvore(L, [X|R], AR, WAR) :- 
+%% obterArvore(L, [X|R], AR, WAR) :- 
+obterArvore(L, [X|R], AR) :- 
 naoPertence(X, L),
 aresta(Y, X),
 insereFim(X, L, NL),
 insereFim([Y, X], AR, NAR),
 write(NAR),
-obterArvore(NL, R, NAR, WAR).
+%% obterArvore(NL, R, NAR, WAR).
+obterArvore(NL, R, NAR).
 
-obterArvore(L, [X|R], AR, WAR) :- 
-obterArvore(L, R, AR, WAR).
+obterArvore(L, [X|R], AR) :- 
+%% obterArvore(L, [X|R], AR, WAR) :- 
+%% obterArvore(L, R, AR, WAR).
+obterArvore(L, R, AR).
 
-obterArvore(L, [], AR, AR).
+obterArvore(L, [], AR).
 
 
 gerarArvore(L) :-
-obterArvore(_, [a,b,c,e,f], [], L),
+obterArvore(_, [a,b,c,e,f], L),
 write(L).
 
