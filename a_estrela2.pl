@@ -87,7 +87,7 @@ G1 = FNO + CUSTO,
 estimarFim(DVIZIN, H),
 F = G1 + H,
 %% REG = (_, _, _, _),
-(FANT > F -> REG = (DVIZIN, PAIANT, GANT, HANT) ; REG = (DVIZIN, NO, G1, H)),
+(FANT < F -> REG = (DVIZIN, PAIANT, GANT, HANT) ; REG = (DVIZIN, NO, G1, H)),
 %% TODO tentar fazer a ordenação no caso base
 quick_sort([REG|LA1], LA2),
 write('adicionarEOuAtualizarListaAbertos1 - NO='), write(NO), write(' FNO='), write(FNO), write(' DVIZIN='), write(DVIZIN), write(' LF='), write(LF), write(' LA='), write(LA), write(' LA2='), write(LA2), write(' NLA='), write(NLA), write('\n'),
@@ -131,12 +131,14 @@ printCaminho(L) :- write(L).
 melhorCaminho(DESTINO, [(DESTINO, _, _, _)| R], LF, LF):- 
 printCaminho(LF).
 
+%% melhorCaminho(DESTINO, [(DESTINO, PAI, _, _)| R], [(PAI, AVO)|RF], LF).
+
 melhorCaminho(DESTINO, [(NO, PAI, G, H)|R], LF, L):-
 FNO is G + H,
 encontrarVizinhos(NO, LV),
 adicionarEOuAtualizarListaAbertos(NO, FNO, LV, LF, R, RO),
 write('RO='), write(RO), write('\n'),
-melhorCaminho(DESTINO, RO, [NO|LF], L).
+melhorCaminho(DESTINO, RO, [(NO, PAI)|LF], L).
 
 a_estrela(X, Y, L) :-
 melhorCaminho(Y, [(X, 0, 0, 0)], [], L),
