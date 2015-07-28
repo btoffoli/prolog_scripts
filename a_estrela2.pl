@@ -130,7 +130,7 @@ melhorCaminho(_, [], LF, LF):-
 write(LF), write('\n').
 
 melhorCaminho(DESTINO, [(DESTINO, PAI, _, _)|R], LF, NLF):-
-melhorCaminho(DESTINO, R, [(DESTINO, PAI)|LF], NLF),
+melhorCaminho(DESTINO, [], [(DESTINO, PAI)|LF], NLF),
 write(LF), write('\n').
 
 %% melhorCaminho(DESTINO, [(DESTINO, PAI, _, _)| R], [(PAI, AVO)|RF], LF).
@@ -140,7 +140,6 @@ FNO is G + H,
 encontrarVizinhos(NO, LV),
 adicionarEOuAtualizarListaAbertos(NO, FNO, LV, LF, R, RO),
 quick_sort(RO, RO1),
-write(RO1), write('\n'),
 melhorCaminho(DESTINO, RO1, [(NO, PAI)|LF], L).
 
 a_estrela(X, Y, L) :-
@@ -153,7 +152,6 @@ printCaminho(NO, [EL|R]) :- printCaminho(NO, R).
 
 printCaminhoCompleto(X, Y):-
 a_estrela(X, Y, L),
-%% write(Y), write('<-'),
 printCaminho(PAI, L),!.
 
 
