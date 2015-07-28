@@ -5,12 +5,12 @@
 
 %% NO A* o custo de um caminho utiliza a funcao F = G + H, que baseia-se na euristica do custo da origem, acumulado de seu PAI 
 
-aresta(a, b, 3).
+aresta(a, b, 2).
 aresta(a, c, 4).
-aresta(b, c, 8).
+aresta(b, c, 1).
 aresta(b, d, 6).
 aresta(c, e, 12).
-aresta(d, e, 15).
+aresta(d, e, 13).
 aresta(e, f, 5).
  
 custoMaximo(999).
@@ -59,6 +59,9 @@ remover(X, R, NL).
 naoPertence(X, []) :- !.
 naoPertence(X, [P|R]) :- P \= X, naoPertence(X, R).
 
+pertence(X, [X|_]).
+pertence(X, [_, Y]):- pertence(X,Y).
+
 %%Encontra os vizinhos de um vértoce
 encontrarVizinhos(NO, L):- findall(X,  aresta(NO, X, _), L).
 
@@ -69,13 +72,19 @@ estimarFim(NO, H) :- H = 0.
 %% Ao invés de garantir a ordem na inserção, talvez seja melhor toda vez quando for desempilhar um nó, buscar o de menor custo, desta forma evito inconveniente de garantir a ordem na inserção
 %% de cada nó vizinho
 %%caso base 
-adicionarEOuAtualizarListaAbertos(NO, FNO, [], LF, LA, LA):- write(LA).
+adicionarEOuAtualizarListaAbertos(NO, FNO, [], LF, LA, LA).
 
 %%adicionarEOuAtualizarListaAbertos(LV, LA, NLA):-
 
+%%preposicao apenas p/ continuar o loop dos adjacentes p/ o caso de já estar na lista fechada
+%% adicionarEOuAtualizarListaAbertos(NO, FNO, [DVIZIN|RVIZIN], LF, LA, NLA):- 
+%% pertence((DVIZIN, _), LF),
+%% adicionarEOuAtualizarListaAbertos(NO, FNO, RVIZIN, LF, LA1, NLA).
+
 %% Caso já esteja no vetor de abertos
 adicionarEOuAtualizarListaAbertos(NO, FNO, [DVIZIN|RVIZIN], LF, LA, NLA):-
-write('adicionarEOuAtualizarListaAbertos1 - NO='), write(NO), write(' FNO='), write(FNO), write(' DVIZIN='), write(DVIZIN), write(' LF='), write(LF), write(' LA='), write(LA), write(' NLA='), write(NLA), write('\n'),
+%%Garante que o no já esta nos fechados
+naoPertence((DVIZIN, _), LF),
 %%Descobrir o custo atual
 aresta(NO, DVIZIN, CUSTO),
 %%Sempre removo, se o custo novo for maior, o registro com o mesmo registro e reinserido na lista
@@ -89,47 +98,40 @@ F = G1 + H,
 %% REG = (_, _, _, _),
 (FANT < F -> REG = (DVIZIN, PAIANT, GANT, HANT) ; REG = (DVIZIN, NO, G1, H)),
 %% TODO tentar fazer a ordenação no caso base
-quick_sort([REG|LA1], LA2),
-write('adicionarEOuAtualizarListaAbertos1 - NO='), write(NO), write(' FNO='), write(FNO), write(' DVIZIN='), write(DVIZIN), write(' LF='), write(LF), write(' LA='), write(LA), write(' LA2='), write(LA2), write(' NLA='), write(NLA), write('\n'),
-adicionarEOuAtualizarListaAbertos(NO, FNO, RVIZIN, LF, LA2, NLA),
-write('NLA='), write(LA1), write('\n').
+%% quick_sort([REG|LA1], LA2),
+adicionarEOuAtualizarListaAbertos(NO, FNO, RVIZIN, LF, [REG|LA1], NLA).
 
 
 %%Caso não esteja na lista de abertos
 adicionarEOuAtualizarListaAbertos(NO, FNO, [DVIZIN|RVIZIN], LF, LA, NLA):-
-write('adicionarEOuAtualizarListaAbertos2 - NO='), write(NO), write(' FNO='), write(FNO), write(' DVIZIN='), write(DVIZIN), write(' LF='), write(LF), write(' LA='), write(LA), write(' NLA='), write(NLA), write('\n'),
+%%Garante que o no já esta nos fechados
+naoPertence((DVIZIN, _), LF),
 %%Descobrir o custo atual
 aresta(NO, DVIZIN, CUSTO),
-write('adicionarEOuAtualizarListaAbertos2.NLA='), write(DVIZIN), write('\n'),
 %%Sempre removo, se o custo novo for maior, o registro com o mesmo registro e reinserido na lista
 naoPertence((DVIZIN, _, _, _), LA),
-write('NLA='), write(DVIZIN), write('\n'),
 %% novo G é dado por G + CUSTO
 G1 = FNO + CUSTO,
-write('NLA='), write(DVIZIN), write('\n'),
 %% Verificar como calcula-se H para cada vertice
 estimarFim(DVIZIN, H),
-write('NLA='), write(DVIZIN), write('\n'),
 F = G1 + H,
-write('NLA='), write(DVIZIN), write('\n'),
 REG = (DVIZIN, NO, G1, H),
-write('NLA='), write(REG), write('\n'),
 %% TODO tentar fazer a ordenação no caso base
-quick_sort([REG|LA], LA1),
-write('NLA='), write(LA1), write('\n'),
-adicionarEOuAtualizarListaAbertos(NO, FNO, RVIZIN, LF, LA1, NLA),
-write('NLA='), write(RVIZIN), write('\n').
+%% quick_sort([REG|LA], LA1),
+adicionarEOuAtualizarListaAbertos(NO, FNO, RVIZIN, LF, [REG|LA], NLA).
 
 
 
 
 
-
-printCaminho(L) :- write(L).
 
 %%Caso Base
-melhorCaminho(DESTINO, [(DESTINO, _, _, _)| R], LF, LF):- 
-printCaminho(LF).
+melhorCaminho(_, [], LF, LF):-
+write(LF), write('\n').
+
+melhorCaminho(DESTINO, [(DESTINO, PAI, _, _)|R], LF, NLF):-
+melhorCaminho(DESTINO, R, [(DESTINO, PAI)|LF], NLF),
+write(LF), write('\n').
 
 %% melhorCaminho(DESTINO, [(DESTINO, PAI, _, _)| R], [(PAI, AVO)|RF], LF).
 
@@ -137,15 +139,22 @@ melhorCaminho(DESTINO, [(NO, PAI, G, H)|R], LF, L):-
 FNO is G + H,
 encontrarVizinhos(NO, LV),
 adicionarEOuAtualizarListaAbertos(NO, FNO, LV, LF, R, RO),
-write('RO='), write(RO), write('\n'),
-melhorCaminho(DESTINO, RO, [(NO, PAI)|LF], L).
+quick_sort(RO, RO1),
+write(RO1), write('\n'),
+melhorCaminho(DESTINO, RO1, [(NO, PAI)|LF], L).
 
 a_estrela(X, Y, L) :-
-melhorCaminho(Y, [(X, 0, 0, 0)], [], L),
-write('a_estrela.L='), write(L).
+melhorCaminho(Y, [(X, 0, 0, 0)], [], L).
+
+printCaminho(_, []).
+printCaminho(NO, [(NO, PAI)|R]) :- write(NO), write('<-'), printCaminho(PAI, R).
+printCaminho(NO, [EL|R]) :- printCaminho(NO, R).
 
 
-
+printCaminhoCompleto(X, Y):-
+a_estrela(X, Y, L),
+%% write(Y), write('<-'),
+printCaminho(PAI, L),!.
 
 
 
