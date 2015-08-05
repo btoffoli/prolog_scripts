@@ -1,3 +1,5 @@
+:- use_module(library(simplex)).
+
 aresta(a, b, 2).
 aresta(a, c, 4).
 aresta(b, c, 1).
@@ -17,3 +19,13 @@ caminho(X, Y, C):-
 
 todosCaminhos(X, Y, L):-
   findall(C, caminho(X, Y, C), L).
+
+
+guardaCaminho(X, Y, L, (C, L)):-
+	aresta(X, Y, C).
+
+guardaCaminho(X, Y, [Z|R], (C, L)):-
+	aresta(X, Z, C1),
+	guardaCaminho(Z, Y, R, (C2, L)),
+	C is C1 +C2.
+
