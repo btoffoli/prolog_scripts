@@ -24,8 +24,8 @@ todosCaminhos(X, Y, L):-
 guardaCaminho(X, Y, L, (C, L)):-
 	aresta(X, Y, C).
 
-guardaCaminho(X, Y, [Z|R], (C, L)):-
+guardaCaminho(X, Y, R,(C, L)):-
 	aresta(X, Z, C1),
-	guardaCaminho(Z, Y, R, (C2, L)),
+	guardaCaminho(Z, Y, [Z | R], (C2, L)),
 	C is C1 +C2.
 
